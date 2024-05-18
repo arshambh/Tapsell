@@ -77,6 +77,9 @@ namespace Tapsell.Controllers
                 result = result.Replace(@"<main class=""mf_home mf_fx"">",
                     @"<div id=""mediaad-0e3zA""></div><main class=""mf_home mf_fx"">");
 
+                result = result.Replace(@"<div class=""bklnk"">",
+                    @"<div id=""mediaad-g3QWB"" ></div><div class=""bklnk"">");
+
                 return result;
 
             }
