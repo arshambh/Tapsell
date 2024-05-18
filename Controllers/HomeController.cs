@@ -14,7 +14,11 @@ namespace Tapsell.Controllers
         [Route("/")]
         public async Task<IActionResult> Index(string? rData = null, string? rest = null)
         {
-            var setting1 = configuration["Site"];
+            // var targetUrl = configuration["Site"];
+            // if (targetUrl == "partobime.ir")
+            // {
+            //  
+            // }
 
             var html = await LoadMusicFa(rData, rest);
             return new ContentResult
@@ -23,6 +27,7 @@ namespace Tapsell.Controllers
                 ContentType = "text/html",
                 StatusCode = 200
             };
+
         }
 
         private async Task<string> LoadMusicFa(string? rData = null, string? rest = null)
@@ -47,8 +52,13 @@ namespace Tapsell.Controllers
 
                 var html = await response.Content.ReadAsStringAsync();
 
-                // New base URL to replace with
+#if DEBUG
                 string newBaseUrl = "https://localhost:44303/?rData=";
+#else
+      string newBaseUrl = "https://partobime.ir/?rData=";
+#endif
+
+
 
                 // Regular expression to find href attributes in a tags with the specific domain and capture the path part
                 string pattern = @"(<a[^>]*\shref=['""]https:\/\/music-fa\.com)([^'""]*['""][^>]*>)";
@@ -64,6 +74,8 @@ namespace Tapsell.Controllers
                 //  string result = Regex.Replace(html, pattern, replacement, RegexOptions.IgnoreCase);
 
 
+                result = result.Replace(@"<main class=""mf_home mf_fx"">",
+                    @"<div id=""mediaad-0e3zA""></div><main class=""mf_home mf_fx"">");
 
                 return result;
 
