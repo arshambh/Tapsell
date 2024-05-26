@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using RestSharp;
 using Tapsell.Models;
@@ -10,9 +10,13 @@ namespace Tapsell.Controllers
     {
 
 
+        // [Route("/rData")]
         [Route("/rdata/{*rest}")]
+      
         [Route("/")]
-        public async Task<IActionResult> Index(string? rData = null, string? rest = null)
+        //[HttpGet("{*catchall}")]
+
+        public async Task<IActionResult> Index(string? rData = null)
         {
             // var targetUrl = configuration["Site"];
             // if (targetUrl == "partobime.ir")
@@ -20,7 +24,7 @@ namespace Tapsell.Controllers
             //  
             // }
 
-            var html = await LoadMusicFa(rData, rest);
+            var html = await LoadMusicFa(rData);
             return new ContentResult
             {
                 Content = html,
@@ -30,7 +34,7 @@ namespace Tapsell.Controllers
 
         }
 
-        private async Task<string> LoadMusicFa(string? rData = null, string? rest = null)
+        private async Task<string> LoadMusicFa(string? rData = null)
         {
             try
             {
@@ -38,9 +42,9 @@ namespace Tapsell.Controllers
                 var localParameter = "rdata";
                 var newsUrl = $"https://music-fa.com";
                 string url = Request.Scheme + "://" + Request.Host + Request.Path;
-                if (!string.IsNullOrEmpty(rest))
+                if (!string.IsNullOrEmpty(rData))
                 {
-                    url = $"{newsUrl}/{rest}";
+                    url = $"{newsUrl}{rData}";
                 }
                 else
                     url = newsUrl;
@@ -53,7 +57,7 @@ namespace Tapsell.Controllers
                 var html = await response.Content.ReadAsStringAsync();
 
 #if DEBUG
-                string newBaseUrl = "https://localhost:44303/?rData=";
+                string newBaseUrl = "https://localhost:7294/?rData=";
 #else
       string newBaseUrl = "https://partobime.ir/?rData=";
 #endif
@@ -79,6 +83,21 @@ namespace Tapsell.Controllers
 
                 result = result.Replace(@"<div class=""bklnk"">",
                     @"<div id=""mediaad-g3QWB"" ></div><div class=""bklnk"">");
+
+                result = result.Replace(@"<article class=""mf_pst""",
+                    @"<div id=""mediaad-MGaM2"" ></div><article class=""mf_pst""");
+
+                result = result.Replace(@"</head>",
+                    """
+                    <script type="text/javascript">
+                        const head = document.getElementsByTagName("head")[0];
+                        const script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.async = true;
+                        script.src = "https://s1.mediaad.org/serve/partobime.ir/loader.js";
+                        head.appendChild(script);
+                    </script>
+                    """);
 
                 return result;
 
