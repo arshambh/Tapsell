@@ -84,8 +84,13 @@ namespace Tapsell.Controllers
                 result = result.Replace(@"<div class=""bklnk"">",
                     @"<div id=""mediaad-g3QWB"" ></div><div class=""bklnk"">");
 
-                result = result.Replace(@"<article class=""mf_pst""",
-                    @"<div id=""mediaad-MGaM2"" ></div><article class=""mf_pst""");
+                if (!string.IsNullOrEmpty(rData))
+                {
+                    result = result.Replace(@"<article class=""mf_pst""",
+                        @"<div id=""mediaad-MGaM2"" ></div><article class=""mf_pst""");
+                }
+
+             
 
                 result = result.Replace(@"</head>",
                     """
