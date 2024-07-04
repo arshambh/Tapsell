@@ -78,6 +78,10 @@ namespace Tapsell.Controllers
                 //  string result = Regex.Replace(html, pattern, replacement, RegexOptions.IgnoreCase);
 
 
+                string pattern1 = @"<title>(.*?)<\/title>";
+                string replacement = "<title>موزیک بادز• دانلود جدیدترین آهنگ ها</title>";
+                result = Regex.Replace(result, pattern1, replacement);
+
                 result = result.Replace(@"<main class=""mf_home mf_fx"">",
                     @"<div id=""mediaad-0e3zA""></div><main class=""mf_home mf_fx"">");
 
@@ -86,8 +90,12 @@ namespace Tapsell.Controllers
 
                 if (!string.IsNullOrEmpty(rData))
                 {
-                    result = result.Replace(@"<article class=""mf_pst""",
-                        @"<div id=""mediaad-MGaM2"" ></div><article class=""mf_pst""");
+                    if (rData.Contains("download-song"))
+                    {
+                        result = result.Replace(@"<article class=""mf_pst""",
+                            @"<div id=""mediaad-MGaM2"" ></div><article class=""mf_pst""");
+                    }
+
                 }
 
              
