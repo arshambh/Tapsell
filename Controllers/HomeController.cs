@@ -18,19 +18,37 @@ namespace Tapsell.Controllers
 
         public async Task<IActionResult> Index(string? rData = null)
         {
-            // var targetUrl = configuration["Site"];
-            // if (targetUrl == "partobime.ir")
-            // {
-            //  
-            // }
 
-            var html = await LoadMusicFa(rData);
-            return new ContentResult
+            if (!Request.Host.HasValue)
+                return BadRequest("Error Loading Website.....!!!");
+
+            var domainUrl = Request.Host.Value;
+
+            if (domainUrl.Contains("partobime"))
             {
-                Content = html,
-                ContentType = "text/html",
-                StatusCode = 200
-            };
+                var html = await LoadMusicFa(rData);
+                return new ContentResult
+                {
+                    Content = html,
+                    ContentType = "text/html",
+                    StatusCode = 200
+                };
+
+            }
+            else
+            {
+                return BadRequest("Error Loading Website.....!!!");
+            }
+
+
+            return BadRequest("Error Loading Website.....!!!");
+            // var html = await LoadMusicFa(rData);
+            // return new ContentResult
+            // {
+            //     Content = html,
+            //     ContentType = "text/html",
+            //     StatusCode = 200
+            // };
 
         }
 
