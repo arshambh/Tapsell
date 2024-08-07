@@ -214,7 +214,22 @@ namespace Tapsell.Controllers
 
                 #endregion
 
+                // <div class="upctr">
 
+                result = result.Replace("<div class=\"upctr\">", "<br><div id=\"mediaad-3e7Mx\"></div><div class=\"upctr\">");
+                result = result.Replace("<div class=\"upctr\">", "<div class=\"upctr\">");
+                result = result.Replace("<h2>جدیدترین آهنگ ها</h2>", "<h2></h2><br/><div id=\"mediaad-X2n8O\"></div>");
+                result = result.Replace("<h2>آهنگ های ویژه</h2>", "<h2></h2><br/><div id=\"mediaad-g3wrr\"></div>");
+                result = result.Replace("<div class=\"upbu\">", "<div id=\"mediaad-kXqyA\"></div><div id=\"mediaad-rmlRJ\"></div><div id=\"mediaad-g3qkm\"></div><div class=\"upbu\">");
+                result = result.Replace("<div class=\"uph1 uph12\">", "<div id=\"mediaad-exOxY\"></div><div class=\"uph1 uph12\">");
+                result = result.Replace("<footer", "<div id=\"mediaad-exR76\" ></div><footer");
+
+                if (!string.IsNullOrEmpty(rData))
+                {
+                result = result.Replace("<ul class=\"upslnk upf\">", "<div id=\"mediaad-rmD4P\" ></div><ul class=\"upslnk upf\">");
+                result = result.Replace("<div class=\"updmp3 upf\"><", "<div id=\"mediaad-jg7zp\" ><div class=\"updmp3 upf\"><");
+
+                }
 
                 #region لود فایل مدیاادز
 
