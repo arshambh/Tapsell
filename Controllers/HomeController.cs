@@ -25,7 +25,7 @@ namespace Tapsell.Controllers
 
 
 #if DEBUG
-            var testSite = await LoadUpMusics(rData);
+            var testSite = await LoadRozMusic(rData);
             return new ContentResult
             {
                 Content = testSite,
@@ -38,6 +38,17 @@ namespace Tapsell.Controllers
             if (domainUrl.Contains("partobime"))
             {
                 var html = await LoadMusicFa(rData);
+                return new ContentResult
+                {
+                    Content = html,
+                    ContentType = "text/html",
+                    StatusCode = 200
+                };
+
+            }
+            else if (domainUrl.Contains("inring"))
+            {
+                var html = await LoadUpMusics(rData);
                 return new ContentResult
                 {
                     Content = html,
@@ -62,6 +73,130 @@ namespace Tapsell.Controllers
             // };
 
         }
+
+
+        public async Task<string> LoadRozMusic(string? rData = null)
+        {
+            try
+            {
+
+                var fakeDomain = "https://mhdbest.ir";
+                var localParameter = "rdata";
+                var newsUrl = $"https://rozmusic.com";
+                string url = Request.Scheme + "://" + Request.Host + Request.Path;
+                if (!string.IsNullOrEmpty(rData))
+                {
+                    url = $"{newsUrl}{rData}";
+                }
+                else
+                    url = newsUrl;
+
+                using HttpClient client = new HttpClient();
+
+                var response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+
+                var html = await response.Content.ReadAsStringAsync();
+
+#if DEBUG
+                string newBaseUrl = "https://localhost:7294/?rData=";
+#else
+      string newBaseUrl = $"{fakeDomain}/?rData=";
+#endif
+
+
+
+                // Regular expression to find href attributes in a tags with the specific domain and capture the path part
+                string pattern = @"(<a[^>]*\shref=['""]https:\/\/rozmusic\.com)([^'""]*['""][^>]*>)";
+
+                // Method to replace the matched URL with the new base URL and keep the path intact
+                string result = Regex.Replace(html, pattern, m =>
+                {
+                    string path = m.Groups[2].Value;
+                    return m.Groups[1].Value.Replace("https://rozmusic.com", newBaseUrl) + path;
+                }, RegexOptions.IgnoreCase);
+
+
+                string pattern1 = @"<title>(.*?)<\/title>";
+                string replacement = "<title>مهد موزیک 👌 لول متفاوتی از شادی با مهد موزیک</title>";
+                result = Regex.Replace(result, pattern1, replacement);
+
+
+
+                #region تگ های مدباادز
+
+                result = result.Replace("<footer>", "<div id=\"mediaad-YwWm0\"></div><footer>");
+                // result = result.Replace("<div class=\"post_content\">", "<div id=\"mediaad-zv4yB\" ></div><div class=\"post_content\">");
+                result = result.Replace("<div class=\"post_content\">", "<div id=\"mediaad-G7X5p\" ></div><div class=\"post_content\">");
+                result = result.Replace("<aside class=\"tab\">", "<div id=\"mediaad-1d4mG\" ></div><aside class=\"tab\">");
+
+
+                int count = 0;
+                result = Regex.Replace(result, @"<article class=""box_right post"">", match =>
+                {
+                    count++;
+                    return count == 2 ? "<div id=\"mediaad-qnM1Z\" ></div><article class=\"box_right post\">" : match.Value;
+                });
+
+                count = 0;
+                result = Regex.Replace(result, @"<article class=""box_right post"">", match =>
+                {
+                    count++;
+                    return count == 3 ? "<div id=\"mediaad-dY7jy\" ></div><article class=\"box_right post\">" : match.Value;
+                });
+
+                count = 0;
+                result = Regex.Replace(result, @"<article class=""box_right post"">", match =>
+                {
+                    count++;
+                    return count == 5 ? "<div id=\"mediaad-EgXPk\" ></div><article class=\"box_right post\">" : match.Value;
+                });
+
+
+
+
+                #region صفحات داخلی
+
+                if (!string.IsNullOrEmpty(rData))
+                {
+                    result = result.Replace("<div class=\"matnmusic\">", "<div id=\"mediaad-zv4yB\" ></div><div class=\"matnmusic\">");
+                    result = result.Replace("<aside class=\"tab\">", "<div id=\"mediaad-45PZ3\" ></div><aside class=\"tab\">");
+
+                }
+
+                #endregion
+
+
+
+                #endregion
+
+                #region لود فایل مدیاادز
+
+                result = result.Replace(@"</head>",
+                    """
+                    <script type="text/javascript">
+                        const head = document.getElementsByTagName("head")[0];
+                        const script = document.createElement("script");
+                        script.type = "text/javascript";
+                        script.async = true;
+                        script.src = "https://s1.mediaad.org/serve/mhdbest.ir/loader.js";
+                        head.appendChild(script);
+                    </script>
+                    """);
+
+                #endregion
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
+        }
+
+
+
 
         private async Task<string> LoadMusicFa(string? rData = null)
         {
@@ -214,7 +349,6 @@ namespace Tapsell.Controllers
 
                 #endregion
 
-                // <div class="upctr">
 
                 result = result.Replace("<div class=\"upctr\">", "<br><div id=\"mediaad-3e7Mx\"></div><div class=\"upctr\">");
                 result = result.Replace("<div class=\"upctr\">", "<div class=\"upctr\">");
@@ -226,8 +360,8 @@ namespace Tapsell.Controllers
 
                 if (!string.IsNullOrEmpty(rData))
                 {
-                result = result.Replace("<ul class=\"upslnk upf\">", "<div id=\"mediaad-rmD4P\" ></div><ul class=\"upslnk upf\">");
-                result = result.Replace("<div class=\"updmp3 upf\"><", "<div id=\"mediaad-jg7zp\" ><div class=\"updmp3 upf\"><");
+                    result = result.Replace("<ul class=\"upslnk upf\">", "<div id=\"mediaad-rmD4P\" ></div><ul class=\"upslnk upf\">");
+                    result = result.Replace("<div class=\"updmp3 upf\"><", "<div id=\"mediaad-jg7zp\" ><div class=\"updmp3 upf\"><");
 
                 }
 
